@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center mt-5">
+  <div class="col-md-4">
+    <div class="card p-4">
+      <h4 style="color: #e8c97e; margin-bottom: 1.5rem; text-align: center;">Login</h4>
+      <form method="POST">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" class="form-control" name="email" placeholder="Enter email" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" class="form-control" name="password" placeholder="Enter password" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-3">Login</button>
+      </form>
+      <p style="color: #555; text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+        Don't have an account? <a href="/sign-up" style="color: #e8c97e;">Sign up</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      crossorigin="anonymous"
+    />
+    <style>
+      body {
+        background-color: #0f0f0f;
+        color: #e8e8e8;
+        font-family: 'Georgia', serif;
+      }
+      .navbar {
+        background-color: #1a1a1a !important;
+        border-bottom: 1px solid #2e2e2e;
+      }
+      .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #e8c97e !important;
+        letter-spacing: 2px;
+      }
+      .nav-link {
+        color: #aaa !important;
+      }
+      .nav-link:hover {
+        color: #e8c97e !important;
+      }
+      .card {
+        background-color: #1a1a1a;
+        border: 1px solid #2e2e2e;
+        border-radius: 8px;
+      }
+      .card-title {
+        color: #e8c97e;
+        font-size: 1.1rem;
+      }
+      .badge-rating {
+        background-color: #e8c97e;
+        color: #0f0f0f;
+        font-size: 0.9rem;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: bold;
+      }
+      .genre-tag {
+        color: #888;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .btn-primary {
+        background-color: #e8c97e;
+        border: none;
+        color: #0f0f0f;
+        font-weight: bold;
+      }
+      .btn-primary:hover {
+        background-color: #d4b56a;
+        color: #0f0f0f;
+      }
+      .form-control {
+        background-color: #1a1a1a;
+        border: 1px solid #2e2e2e;
+        color: #e8e8e8;
+      }
+      .form-control:focus {
+        background-color: #1a1a1a;
+        border-color: #e8c97e;
+        color: #e8e8e8;
+        box-shadow: 0 0 0 0.2rem rgba(232, 201, 126, 0.15);
+      }
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: #e8e8e8;
+        letter-spacing: 1px;
+        margin-bottom: 1.5rem;
+      }
+      .delete-btn {
+        background: none;
+        border: none;
+        color: #555;
+        font-size: 1.1rem;
+        cursor: pointer;
+        float: right;
+      }
+      .delete-btn:hover {
+        color: #e05555;
+      }
+      label {
+        color: #aaa;
+        font-size: 0.9rem;
+      }
+    </style>
+    <title>Watched — {% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="/">WATCHED</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbar"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar">
+        <div class="navbar-nav ml-auto">
+          {% if user.is_authenticated %}
+          <a class="nav-link" href="/">My Reviews</a>
+          <a class="nav-link" href="/logout">Logout</a>
+          {% else %}
+          <a class="nav-link" href="/login">Login</a>
+          <a class="nav-link" href="/sign-up">Sign Up</a>
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category == 'error' %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert">
+                  <span>&times;</span>
+                </button>
+              </div>
+            {% else %}
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert">
+                  <span>&times;</span>
+                </button>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+    {% block javascript %}
+    <script>
+      function deleteReview(reviewId) {
+        fetch("/delete-review", {
+          method: "POST",
+          body: JSON.stringify({ reviewId: reviewId }),
+        }).then(() => {
+          window.location.href = "/";
+        });
+      }
+    </script>
+    {% endblock %}
+  </body>
+</html>
