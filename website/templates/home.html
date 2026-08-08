@@ -5,7 +5,7 @@
 <div class="row">
   <!-- Reviews List -->
   <div class="col-md-7">
-    <div class="section-title">{{ user.first_name }}'s Watched List</div>
+    <div class="section-title">{{ user.first_name }}'s Diary</div>
 
     {% if user.reviews %}
       {% for review in user.reviews | sort(attribute='date_added', reverse=True) %}
