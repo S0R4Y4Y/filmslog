@@ -7,9 +7,9 @@ resource "aws_vpc" "filmslog_vpc" {
 }
 
 resource "aws_subnet" "public_subnet" {
-  vpc_id = aws_vpc.filmslog_vpc.id
-  cidr_block = "10.0.1.0/24"
-  availability_zone = "ap-southeast-1a" 
+  vpc_id                  = aws_vpc.filmslog_vpc.id
+  cidr_block              = "10.0.1.0/24"
+  availability_zone       = "ap-southeast-1a"
   map_public_ip_on_launch = true
 
   tags = {
@@ -27,7 +27,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.filmslog_vpc.id
-  
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.igw.id
@@ -39,7 +39,7 @@ resource "aws_route_table" "public_rt" {
 }
 
 resource "aws_route_table_association" "public_assoc" {
-  subnet_id = aws_subnet.public_subnet.id
+  subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public_rt.id
 }
 
