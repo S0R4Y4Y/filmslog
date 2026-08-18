@@ -33,7 +33,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
-          usernama: ec2-user
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             aws ecr get-login-password --region ap-southeast-1 | sudo docker login --username AWS --password-stdin 563355308046.dkr.ecr.ap-southeast-1.amazonaws.com
