@@ -7,6 +7,5 @@ services:
       - "8080:5000"
     volumes:
       - ./instance:/app/instance
-    environment:
-      - FLASK_ENV=development
-      - SECRET_KEY=watched-secret-key
+    env_file:
+      - .env
