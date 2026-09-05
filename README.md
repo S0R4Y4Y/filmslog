@@ -59,5 +59,10 @@ On every push to `main`:
 3. Image pushed to AWS ECR
 4. EC2 pulls latest image and restarts container
 
-## Why I built this
-I wanted a place to remember how I felt about movies I've watched and used it as a vehicle to practice real cloud engineering: containerization, infrastructure as code, and automated deployments.
+## Screenshots
+
+### Login Page
+![Login Page](screenshots/login.png)
+
+### Main Dashboard
+![Dashboard](screenshots/dashboard.png)
