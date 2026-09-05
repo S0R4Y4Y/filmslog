@@ -17,9 +17,9 @@
           <span class="badge-rating">{{ review.rating }}/10</span>
         </div>
         {% if review.review_text %}
-          <p style="color: #ccc; font-size: 0.95rem; margin-top: 8px;">{{ review.review_text }}</p>
+          <p style="color: #ffffff; font-size: 0.95rem; margin-top: 8px;">{{ review.review_text }}</p>
         {% endif %}
-        <small style="color: #555;">{{ review.date_added.strftime('%B %d, %Y') }}</small>
+        <small style="color: #ffffff;">{{ review.date_added.strftime('%B %d, %Y') }}</small>
       </div>
       {% endfor %}
     {% else %}
@@ -30,7 +30,7 @@
   <!-- Add Review Form -->
   <div class="col-md-5">
     <div class="card p-4" style="position: sticky; top: 20px;">
-      <h5 style="color: #e8c97e; margin-bottom: 1.2rem;">Add a Review</h5>
+      <h5 style="color: #F6D8BD; margin-bottom: 1.2rem;">Add a Review</h5>
       <form method="POST">
         <div class="form-group">
           <label>Movie Title</label>
