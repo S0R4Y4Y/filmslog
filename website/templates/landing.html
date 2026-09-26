@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block full_width %}
+
+<!-- HERO SECTION -->
+<div style="background-color: #8FBFBF; padding: 3rem 4rem 0 4rem;">
+  <h1 style="font-size: 6rem; font-weight: bold; color: #2C2416; line-height: 1; margin-bottom: 1rem; text-align: center;">
+    Log, Rate, and Reflect!
+  </h1>
+</div>
+
+<div style="position: relative; width: 100%; height: 600px; overflow: hidden;">
+  <img src="{{ url_for('static', filename='hero.jpg') }}" 
+       style="width: 100%; height: 100%; object-fit: cover;" />
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55);"></div>
+  <div style="position: absolute; bottom: 2rem; left: 0; width: 100%; text-align: center;">
+    <p style="color: #F0E6A0; font-size: 1.4rem; font-style: italic;">
+      Revisit how you felt about any film, anytime.
+    </p>
+  </div>
+</div>
+
+<!-- QUOTES SECTION -->
+<div style="background-color: #F0E6A0; padding: 5rem 4rem;">
+  <div class="row">
+    <div class="col-md-4" style="padding: 1rem 2rem;">
+      <p style="font-size: 1.1rem; color: #2C2416; font-style: italic;">
+        "Cinema is a mirror by which we often see ourselves."
+      </p>
+      <p style="color: #612D53; font-size: 0.9rem;">— Martin Scorsese</p>
+    </div>
+    <div class="col-md-4" style="padding: 1rem 2rem; text-align: center;">
+      <p style="font-size: 1.1rem; color: #2C2416; font-style: italic;">
+        "Every film is a journey."
+      </p>
+      <p style="color: #612D53; font-size: 0.9rem;">— Alfonso Cuarón</p>
+    </div>
+    <div class="col-md-4" style="padding: 1rem 2rem; text-align: right;">
+      <p style="font-size: 1.1rem; color: #2C2416; font-style: italic;">
+        "A film is never really good unless the camera is an eye in the head of a poet."
+      </p>
+      <p style="color: #612D53; font-size: 0.9rem;">— Orson Welles</p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

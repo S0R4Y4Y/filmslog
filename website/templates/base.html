@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       rel="stylesheet"
@@ -10,69 +12,93 @@
     />
     <style>
       body {
-        background-color: #F6D8BD;
-        color: #1a1a1a;
-        font-family: 'Georgia', serif;
+        background-color: #8FBFBF;
+        color: #2C2416;
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
       }
       .navbar {
-        background-color: #5D3140 !important;
-        border-bottom: 1px solid #e0e0e0;
+        background-color: #8FBFBF !important;
+        border-bottom: none;
+        padding: 1rem 2rem;
       }
       .navbar-brand {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: bold;
-        color: #ffffff !important;
-        letter-spacing: 2px;
+        color: #2C2416 !important;
+        letter-spacing: 1px;
       }
       .nav-link {
-        color: #ffffff !important;
+        color: #2C2416 !important;
+        font-size: 0.95rem;
       }
       .nav-link:hover {
+        color: #612D53 !important;
+      }
+      .btn-signup {
+        background-color: #2C2416;
         color: #ffffff !important;
+        border-radius: 20px;
+        padding: 6px 20px;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+      }
+      .btn-signup:hover {
+        background-color: #853953;
+        color: #ffffff !important;
+        text-decoration: none;
       }
       .card {
-        background-color: #5D3140;
-        border: 1px solid #e0e0e0;
+        background-color: #F0E6A0;
+        border: none;
         border-radius: 8px;
       }
       .card-title {
-        color: #F6D8BD;
+        color: #2C2416;
         font-size: 1.1rem;
       }
       .badge-rating {
-        background-color: #F6D8BD;
-        color: #5D3140;;
+        background-color: #853953;
+        color: #ffffff;
         font-size: 0.9rem;
         padding: 4px 10px;
         border-radius: 12px;
         font-weight: bold;
       }
       .genre-tag {
-        color: #888;
+        color: #612D53;
         font-size: 0.8rem;
         text-transform: uppercase;
         letter-spacing: 1px;
       }
       .btn-primary {
-        background-color: #F6D8BD;
+        background-color: #F39399;
         border: none;
         color: #ffffff;
         font-weight: bold;
+        border-radius: 4px;
       }
       .btn-primary:hover {
-        background-color: #F39399;
+        background-color: #CF4173;
         color: #ffffff;
       }
       .form-control {
-        background-color: #5D3140;
-        border: 1px solid #e0e0e0;
+        background-color: #612D53;
+        border: 1px solid #853953;
         color: #ffffff;
+        border-radius: 4px;
       }
       .form-control:focus {
         background-color: #612D53;
         border-color: #853953;
         color: #ffffff;
         box-shadow: 0 0 0 0.2rem rgba(133, 57, 83, 0.15);
+      }
+      .form-control::placeholder {
+        color: #ffffff;
+        opacity: 0.7;
       }
       .section-title {
         font-size: 1.8rem;
@@ -84,17 +110,49 @@
       .delete-btn {
         background: none;
         border: none;
-        color: #555;
+        color: #853953;
         font-size: 1.1rem;
         cursor: pointer;
         float: right;
       }
       .delete-btn:hover {
-        color: #e05555;
+        color: #CF4173;
       }
       label {
         color: #ffffff;
         font-size: 0.9rem;
+      }
+      .alert {
+        border-radius: 4px;
+      }
+      /* FLIP CARD */
+      .flip-card {
+        width: 100%;
+        height: 450px;
+        perspective: 1000px;
+        cursor: pointer;
+      }
+      .flip-card-inner {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          transition: transform 0.6s;
+          transform-style: preserve-3d;
+      }
+      .flip-card:hover .flip-card-inner {
+          transform: rotateY(180deg);
+      }
+      .flip-card-front, .flip-card-back {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+      }
+      .flip-card-back {
+          transform: rotateY(180deg);
       }
     </style>
     <title>FilmsLog — {% block title %}{% endblock %}</title>
@@ -113,29 +171,35 @@
       <div class="collapse navbar-collapse" id="navbar">
         <div class="navbar-nav ml-auto">
           {% if user.is_authenticated %}
-          <a class="nav-link" href="/">My Reviews</a>
-          <a class="nav-link" href="/logout">Logout</a>
+          <a class="nav-link" data-toggle="modal" data-target="#logModal" href="#">Log</a>
+          <a class="nav-link" data-toggle="modal" data-target="#editModal" href="#">Edit Page</a>
+          <a class="nav-link" href="/logout" 
+            style="background-color: #e8c97e; color: #2C2416 !important; border-radius: 20px; padding: 6px 20px; font-weight: bold; display: inline-flex; align-items: center; justify-content: center;"
+            >Logout
+          </a>
           {% else %}
           <a class="nav-link" href="/login">Login</a>
-          <a class="nav-link" href="/sign-up">Sign Up</a>
+          <a class="btn-signup nav-link" href="/sign-up">Sign Up</a>
           {% endif %}
         </div>
       </div>
     </nav>
+
+    {% block full_width %}{% endblock %}
 
     <div class="container mt-4">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, message in messages %}
             {% if category == 'error' %}
-              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-dismissible fade show" role="alert" style="background-color: #2C2416; color: #8FBFBF; border: none; border-radius: 30px;">
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert">
                   <span>&times;</span>
                 </button>
               </div>
             {% else %}
-              <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-dismissible fade show" role="alert" style="background-color: #2C2416; color: #8FBFBF; border: none; border-radius: 30px;">
                 {{ message }}
                 <button type="button" class="close" data-dismiss="alert">
                   <span>&times;</span>

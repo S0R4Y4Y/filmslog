@@ -1,69 +1,260 @@
 {% extends "base.html" %}
-{% block title %}My Reviews{% endblock %}
-{% block content %}
+{% block title %}{{ user.first_name }}'s Diary{% endblock %}
 
-<div class="row">
-  <!-- Reviews List -->
-  <div class="col-md-7">
-    <div class="section-title">{{ user.first_name }}'s Diary</div>
+{% block full_width %}
 
-    {% if user.reviews %}
+<!-- HERO SECTION -->
+<div style="position: relative; width: 100%; height: 650px; overflow: hidden;">
+  {% if user.background_image %}
+    <img src="{{ user.background_image }}" style="width: 100%; height: 100%; object-fit: cover;" />
+  {% else %}
+    <img src="{{ url_for('static', filename='hero.jpg') }}" style="width: 100%; height: 100%; object-fit: cover;" />
+  {% endif %}
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45);"></div>
+  <div style="position: absolute; bottom: 3rem; left: 3rem;">
+    <h1 style="font-size: 5rem; font-weight: bold; color: #F0E6A0; line-height: 1;">
+      {{ user.diary_title if user.diary_title else user.first_name + "'s Diary" }}
+    </h1>
+  </div>
+</div>
+
+<!-- MOVIE CARDS GRID -->
+<div style="background-color: #2C2416; padding: 3rem 4rem; min-height: 400px;">
+  {% if user.reviews %}
+    <div class="row">
       {% for review in user.reviews | sort(attribute='date_added', reverse=True) %}
-      <div class="card mb-3 p-3">
-        <button class="delete-btn" onclick="deleteReview({{ review.id }})">&#10005;</button>
-        <div class="genre-tag mb-1">{{ review.genre if review.genre else 'No genre' }}</div>
-        <div class="card-title">{{ review.movie_title }}</div>
-        <div class="mb-2">
-          <span class="badge-rating">{{ review.rating }}/10</span>
+      <div class="col-md-3 mb-4">
+
+        <!-- CARD FLIP CONTAINER -->
+        <div class="flip-card">
+          <div class="flip-card-inner">
+
+            <!-- FRONT -->
+            <div class="flip-card-front" style="border-radius: 12px; overflow: hidden; background-color: #3a2e20;">
+              {% if review.poster_image %}
+                <img src="{{ review.poster_image }}" style="width: 100%; height: 100%; object-fit: cover;" />
+              {% else %}
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                  <span style="color: #8FBFBF; font-size: 0.9rem;">No poster</span>
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- BACK -->
+            <div class="flip-card-back" style="border-radius: 12px; background-color: #8FBFBF; padding: 1.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+              <p style="color: #2C2416; font-size: 0.9rem; font-style: italic;">
+                {{ review.review_text if review.review_text else 'No review written.' }}
+              </p>
+            </div>
+
+          </div>
         </div>
-        {% if review.review_text %}
-          <p style="color: #ffffff; font-size: 0.95rem; margin-top: 8px;">{{ review.review_text }}</p>
-        {% endif %}
-        <small style="color: #ffffff;">{{ review.date_added.strftime('%B %d, %Y') }}</small>
+
+        <!-- MOVIE INFO BELOW CARD -->
+        <div style="padding: 0.8rem 0;">
+          <p style="color: #F0E6A0; font-size: 1rem; font-weight: bold; margin-bottom: 0.2rem;">
+            {{ review.movie_title }}
+          </p>
+          <p style="color: #aaa; font-size: 0.9rem; margin: 0;">
+            {% for i in range(review.rating) %}<span style="color: #F0E6A0; font-size: 1.1rem;">★</span>{% endfor %}
+          </p>
+        </div>
+
       </div>
       {% endfor %}
-    {% else %}
-      <p style="color: #555;">No reviews yet. Add your first movie!</p>
-    {% endif %}
-  </div>
+    </div>
+  {% else %}
+    <p style="color: #8FBFBF; text-align: center; padding: 3rem;">No movies logged yet. Click Log to add your first!</p>
+  {% endif %}
+</div>
 
-  <!-- Add Review Form -->
-  <div class="col-md-5">
-    <div class="card p-4" style="position: sticky; top: 20px;">
-      <h5 style="color: #F6D8BD; margin-bottom: 1.2rem;">Add a Review</h5>
-      <form method="POST">
-        <div class="form-group">
-          <label>Movie Title</label>
-          <input type="text" class="form-control" name="movie_title" placeholder="e.g. Interstellar" required />
-        </div>
-        <div class="form-group">
-          <label>Genre</label>
-          <select class="form-control" name="genre">
-            <option value="">Select genre</option>
-            <option>Action</option>
-            <option>Comedy</option>
-            <option>Drama</option>
-            <option>Horror</option>
-            <option>Romance</option>
-            <option>Sci-Fi</option>
-            <option>Thriller</option>
-            <option>Animation</option>
-            <option>Documentary</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Rating (1–10)</label>
-          <input type="number" class="form-control" name="rating" min="1" max="10" placeholder="e.g. 8" required />
-        </div>
-        <div class="form-group">
-          <label>Review (optional)</label>
-          <textarea class="form-control" name="review_text" rows="3" placeholder="What did you think?"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Add to Watched</button>
-      </form>
+<!-- LOG MODAL -->
+<div class="modal fade" id="logModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="background-color: #8FBFBF; border: none; border-radius: 12px;">
+      <div class="modal-header" style="border-bottom: 1px solid #2C2416;">
+        <h5 class="modal-title" style="color: #2C2416; width: 100%; text-align: center;">Log a Movie</h5>
+        <button type="button" class="close" data-dismiss="modal" style="color: #2C2416;">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/diary" enctype="multipart/form-data">
+          <div class="form-group">
+            <label style="color: #2C2416;">Movie Title</label>
+            <input type="text" class="form-control" name="movie_title" placeholder="e.g. Interstellar" required
+              style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px;" />
+          </div>
+          <div class="form-group">
+            <label style="color: #2C2416;">Genre</label>
+            <select class="form-control" name="genre"
+              style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px;">
+              <option value="">Select genre</option>
+              <option>Action</option>
+              <option>Comedy</option>
+              <option>Drama</option>
+              <option>Horror</option>
+              <option>Romance</option>
+              <option>Sci-Fi</option>
+              <option>Thriller</option>
+              <option>Animation</option>
+              <option>Documentary</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label style="color: #2C2416;">Rating (1-5 stars)</label>
+            <input type="number" class="form-control" name="rating" min="1" max="5" placeholder="e.g. 4" required
+              style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px;" />
+          </div>
+          <div class="form-group">
+            <label style="color: #2C2416;">Review (optional)</label>
+            <textarea class="form-control" name="review_text" rows="3" placeholder="What did you think?"
+              style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label style="color: #2C2416;">Movie Poster</label>
+            <input type="file" class="form-control" name="poster" accept="image/*"
+              style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px;" />
+          </div>
+          <button type="submit"
+            style="width: 100%; background-color: #2C2416; color: #8FBFBF; border: none; border-radius: 30px; padding: 12px; font-weight: bold; margin-top: 0.5rem;">
+            Add to Diary
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- EDIT PAGE MODAL -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content" style="background-color: #8FBFBF; border: none; border-radius: 12px;">
+      <div class="modal-header" style="border-bottom: 1px solid #6a9f9f;">
+        <h5 class="modal-title" style="color: #2C2416; width: 100%; text-align: center;">Edit Page</h5>
+        <button type="button" class="close" data-dismiss="modal" style="color: #2C2416;">
+          <span>&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/edit-page" enctype="multipart/form-data">
+          <div class="form-group">
+            <label style="color: #2C2416;">Diary Title</label>
+            <input type="text" class="form-control" name="diary_title"
+              placeholder="{{ user.diary_title or (user.first_name ~ 's Diary') }}"
+              style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px;" />
+          </div>
+          <div class="form-group">
+            <label style="color: #2C2416;">Background Image</label>
+            <input type="file" class="form-control" name="background" accept="image/*"
+              style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px;" />
+          </div>
+          <button type="submit"
+            style="width: 100%; background-color: #2C2416; color: #8FBFBF; border: none; border-radius: 30px; padding: 12px; font-weight: bold; margin-top: 0.5rem;">
+            Save Changes
+          </button>
+        </form>
+
+        <hr style="border-color: #6a9f9f; margin: 1.5rem 0;">
+
+        <p style="color: #2C2416; font-size: 1rem; font-weight: bold; margin-bottom: 1rem;">Your Reviews</p>
+        {% if user.reviews %}
+          {% for review in user.reviews | sort(attribute='date_added', reverse=True) %}
+          <div style="border-bottom: 1px solid #6a9f9f; padding: 0.7rem 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <p style="color: #2C2416; margin: 0; font-size: 0.95rem; font-weight: bold;">{{ review.movie_title }}</p>
+                <p style="color: #5a7a7a; margin: 0; font-size: 0.8rem;">
+                  {% for i in range(review.rating) %}<span style="color: #2C2416; font-size: 0.9rem;">★</span>{% endfor %}
+                </p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button onclick="toggleEdit({{ review.id }})"
+                  style="background-color: #2C2416; border: none; color: #8FBFBF; border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; cursor: pointer;">
+                  Edit
+                </button>
+                <button onclick="deleteReview({{ review.id }})"
+                  style="background-color: #2C2416; border: none; color: #8FBFBF; border-radius: 20px; padding: 4px 14px; font-size: 0.8rem; cursor: pointer;">
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            <div id="edit-{{ review.id }}" style="display: none; margin-top: 1rem;">
+              <form method="POST" action="/edit-review/{{ review.id }}" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label style="color: #2C2416; font-size: 0.85rem;">Movie Title</label>
+                  <input type="text" class="form-control" name="movie_title" value="{{ review.movie_title }}"
+                    style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px; font-size: 0.85rem;" />
+                </div>
+                <div class="form-group">
+                  <label style="color: #2C2416; font-size: 0.85rem;">Genre</label>
+                  <select class="form-control" name="genre"
+                    style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px; font-size: 0.85rem;">
+                    <option {% if review.genre == 'Action' %}selected{% endif %}>Action</option>
+                    <option {% if review.genre == 'Comedy' %}selected{% endif %}>Comedy</option>
+                    <option {% if review.genre == 'Drama' %}selected{% endif %}>Drama</option>
+                    <option {% if review.genre == 'Horror' %}selected{% endif %}>Horror</option>
+                    <option {% if review.genre == 'Romance' %}selected{% endif %}>Romance</option>
+                    <option {% if review.genre == 'Sci-Fi' %}selected{% endif %}>Sci-Fi</option>
+                    <option {% if review.genre == 'Thriller' %}selected{% endif %}>Thriller</option>
+                    <option {% if review.genre == 'Animation' %}selected{% endif %}>Animation</option>
+                    <option {% if review.genre == 'Documentary' %}selected{% endif %}>Documentary</option>
+                    <option {% if review.genre == 'Other' %}selected{% endif %}>Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label style="color: #2C2416; font-size: 0.85rem;">Rating (1-5)</label>
+                  <input type="number" class="form-control" name="rating" value="{{ review.rating }}" min="1" max="5"
+                    style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px; font-size: 0.85rem;" />
+                </div>
+                <div class="form-group">
+                  <label style="color: #2C2416; font-size: 0.85rem;">Review</label>
+                  <textarea class="form-control" name="review_text" rows="2"
+                    style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px; font-size: 0.85rem;">{{ review.review_text }}</textarea>
+                </div>
+                <div class="form-group">
+                  <label style="color: #2C2416; font-size: 0.85rem;">Change Poster</label>
+                  <input type="file" class="form-control" name="poster" accept="image/*"
+                    style="background-color: transparent; border: 1px solid #2C2416; color: #2C2416; border-radius: 8px; font-size: 0.85rem;" />
+                </div>
+                <button type="submit"
+                  style="width: 100%; background-color: #2C2416; color: #8FBFBF; border: none; border-radius: 30px; padding: 10px; font-size: 0.85rem; font-weight: bold; cursor: pointer;">
+                  Save
+                </button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p style="color: #2C2416; font-size: 0.9rem;">No reviews yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+  function deleteReview(reviewId) {
+    fetch("/delete-review", {
+      method: "POST",
+      body: JSON.stringify({ reviewId: reviewId }),
+    }).then(() => {
+      window.location.href = "/diary";
+    });
+  }
+
+  function toggleEdit(reviewId) {
+    const form = document.getElementById('edit-' + reviewId);
+    if (form.style.display === 'none') {
+      form.style.display = 'block';
+    } else {
+      form.style.display = 'none';
+    }
+  }
+</script>
 {% endblock %}

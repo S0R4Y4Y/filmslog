@@ -3,9 +3,14 @@ version: '3.8'
 services:
   web:
     build: .
-    ports: 
+    ports:
       - "8080:5000"
     volumes:
       - ./instance:/app/instance
-    env_file:
-      - .env
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY=filmslog-secret-key
+      - S3_BUCKET=filmslog-bucket-c49d2ba1
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=ap-southeast-1

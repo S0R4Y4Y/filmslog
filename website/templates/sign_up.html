@@ -3,31 +3,34 @@
 {% block content %}
 
 <div class="row justify-content-center mt-5">
-  <div class="col-md-4">
-    <div class="card p-4">
-      <h4 style="color: #F6D8BD; margin-bottom: 1.5rem; text-align: center;">Create Account</h4>
+  <div class="col-md-5">
+    <div style="background-color: #2C2416; border-radius: 12px; padding: 2.5rem;">
       <form method="POST">
         <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" class="form-control" name="email" placeholder="Enter email" required />
+          <label style="color: #8FBFBF;">First Name <span style="color: #8FBFBF; font-size: 0.8rem;">(required)</span></label>
+          <input type="text" class="form-control" name="firstName" placeholder="" required
+            style="background-color: transparent; border: 1px solid #8FBFBF; color: #8FBFBF; border-radius: 8px;" />
         </div>
         <div class="form-group">
-          <label>First Name</label>
-          <input type="text" class="form-control" name="firstName" placeholder="Enter first name" required />
+          <label style="color: #8FBFBF;">Email <span style="color: #8FBFBF; font-size: 0.8rem;">(required)</span></label>
+          <input type="email" class="form-control" name="email" placeholder="" required
+            style="background-color: transparent; border: 1px solid #8FBFBF; color: #8FBFBF; border-radius: 8px;" />
         </div>
         <div class="form-group">
-          <label>Password</label>
-          <input type="password" class="form-control" name="password1" placeholder="Enter password" required />
+          <label style="color: #8FBFBF;">Password <span style="color: #8FBFBF; font-size: 0.8rem;">(required)</span></label>
+          <input type="password" class="form-control" name="password1" placeholder="" required
+            style="background-color: transparent; border: 1px solid #8FBFBF; color: #8FBFBF; border-radius: 8px;" />
         </div>
         <div class="form-group">
-          <label>Confirm Password</label>
-          <input type="password" class="form-control" name="password2" placeholder="Confirm password" required />
+          <label style="color: #8FBFBF;">Confirm Password <span style="color: #8FBFBF; font-size: 0.8rem;">(required)</span></label>
+          <input type="password" class="form-control" name="password2" placeholder="" required
+            style="background-color: transparent; border: 1px solid #8FBFBF; color: #8FBFBF; border-radius: 8px;" />
         </div>
-        <button type="submit" class="btn btn-primary btn-block mt-3">Create Account</button>
+        <button type="submit"
+          style="width: 100%; background-color: #8FBfBF; color: #2C2416; border: none; border-radius: 30px; padding: 15px; font-size: 1rem; margin-top: 1rem; cursor: pointer;">
+          Create Account
+        </button>
       </form>
-      <p style="color: #555; text-align: center; margin-top: 1rem; font-size: 0.9rem;">
-        Already have an account? <a href="/login" style="color: #F6D8BD;">Login</a>
-      </p>
     </div>
   </div>
 </div>
