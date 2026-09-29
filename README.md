@@ -179,7 +179,7 @@ filmslog/
 ## Features
 
 - User registration and authentication
-- Log films with title, genre, star rating (1-10), and written review
+- Log films with title, genre, star rating (1-5), and written review
 - Upload custom movie posters stored on AWS S3
 - Flip card interaction to reveal review text on hover
 - Customizable diary title and hero background image per user
