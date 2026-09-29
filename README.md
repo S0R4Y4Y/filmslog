@@ -32,26 +32,31 @@ Filmslog allows users to maintain a personal record of films they have watched. 
 ---
 
 ## Architecture
+
+```
 Developer pushes to main branch
-|
-v
-GitHub Actions (CI/CD Pipeline)
-|
-|-- Build Docker image (linux/amd64)
-|-- Push to AWS ECR
-|-- SSH into EC2
-|-- Pull latest image
-`-- Restart container
         |
         v
-AWS EC2 Instance
-|-- Nginx (port 80/443)
-|   `-- Proxy to Flask (port 8080)
-|-- Docker container (Flask app)
-`-- AWS S3 (image storage)
+GitHub Actions (CI/CD Pipeline)
+        |
+        |-- Build Docker image (linux/amd64)
+        |-- Push to AWS ECR
+        |-- SSH into EC2
+        |-- Pull latest image
+        `-- Restart container
+                |
+                v
+        AWS EC2 Instance
+        |-- Nginx (port 80/443)
+        |   `-- Proxy to Flask (port 8080)
+        |-- Docker container (Flask app)
+        `-- AWS S3 (image storage)
 
 DNS: Cloudflare -> Elastic IP -> EC2
 SSL: Let's Encrypt via Certbot
+```
+
+---
 
 ## AWS Infrastructure
 
@@ -139,39 +144,42 @@ terraform destroy
 ---
 
 ## Project Structure
+
+```
 filmslog/
 ├── .github/
-│ └── workflows/
-│ └── deploy.yml # CI/CD pipeline
+│   └── workflows/
+│       └── deploy.yml          # CI/CD pipeline
 ├── infrastructure/
-│ ├── main.tf # Provider configuration
-│ ├── vpc.tf # VPC, subnets, routing
-│ ├── ec2.tf # EC2 instance
-│ ├── ecr.tf # Container registry
-│ ├── iam.tf # Roles and policies
-│ ├── s3.tf # Object storage
-│ ├── elastic_ip.tf # Fixed public IP
-│ ├── keypair.tf # SSH key pair
-│ └── outputs.tf # Output values
+│   ├── main.tf                 # Provider configuration
+│   ├── vpc.tf                  # VPC, subnets, routing
+│   ├── ec2.tf                  # EC2 instance
+│   ├── ecr.tf                  # Container registry
+│   ├── iam.tf                  # Roles and policies
+│   ├── s3.tf                   # Object storage
+│   ├── elastic_ip.tf           # Fixed public IP
+│   ├── keypair.tf              # SSH key pair
+│   └── outputs.tf              # Output values
 ├── website/
-│ ├── templates/ # HTML templates
-│ ├── static/ # Static assets
-│ ├── init.py # App factory
-│ ├── models.py # Database models
-│ ├── views.py # Route handlers
-│ ├── auth.py # Authentication
-│ └── s3.py # S3 upload utility
-├── main.py # Application entry point
-├── requirements.txt # Python dependencies
-├── Dockerfile # Container definition
-└── docker-compose.yml # Local development setup
+│   ├── templates/              # HTML templates
+│   ├── static/                 # Static assets
+│   ├── __init__.py             # App factory
+│   ├── models.py               # Database models
+│   ├── views.py                # Route handlers
+│   ├── auth.py                 # Authentication
+│   └── s3.py                   # S3 upload utility
+├── main.py                     # Application entry point
+├── requirements.txt            # Python dependencies
+├── Dockerfile                  # Container definition
+└── docker-compose.yml          # Local development setup
+```
 
 ---
 
 ## Features
 
 - User registration and authentication
-- Log films with title, genre, star rating (1-5), and written review
+- Log films with title, genre, star rating (1-10), and written review
 - Upload custom movie posters stored on AWS S3
 - Flip card interaction to reveal review text on hover
 - Customizable diary title and hero background image per user
