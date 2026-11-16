@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -27,9 +27,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker buildx build --platform linux/amd64 -t filmslog:latest .
-          docker tag filmslog:latest 563355308046.dkr.ecr.ap-southeast-1.amazonaws.com/filmslog:latest
-          docker push 563355308046.dkr.ecr.ap-southeast-1.amazonaws.com/filmslog:latest
+          docker buildx build --platform linux/amd64 -t ${{ steps.login-ecr.outputs.registry }}/filmslog:latest .
+          docker push ${{ steps.login-ecr.outputs.registry }}/filmslog:latest
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.10
@@ -37,10 +36,10 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: true
           script: |
-            aws ecr get-login-password --region ap-southeast-1 | sudo docker login --username AWS --password-stdin 563355308046.dkr.ecr.ap-southeast-1.amazonaws.com
-            sudo docker pull 563355308046.dkr.ecr.ap-southeast-1.amazonaws.com/filmslog:latest
+            aws ecr get-login-password --region ap-southeast-1 | sudo docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+            sudo docker pull ${{ secrets.ECR_REGISTRY }}/filmslog:latest
             sudo docker stop filmslog || true
             sudo docker rm filmslog || true
-            sudo docker run -d -p 8080:5000 --name filmslog 563355308046.dkr.ecr.ap-southeast-1.amazonaws.com/filmslog:latest
- 
+            sudo docker run -d -p 8080:5000 --name filmslog ${{ secrets.ECR_REGISTRY }}/filmslog:latest
