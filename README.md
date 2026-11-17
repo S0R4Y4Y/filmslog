@@ -1,16 +1,12 @@
-# Filmslog
+# FilmsLog
 
-A personal movie diary web application where users can log, rate, and review films they have watched. Built as a cloud engineering portfolio project demonstrating containerization, infrastructure as code, automated CI/CD pipelines, and production-grade AWS deployment.
+A personal movie diary web application where users can log, rate, and review films they have watched. Built as a cloud engineering portfolio project demonstrating containerization, infrastructure as code, an automated build-and-deploy pipeline, and a live AWS deployment with a custom domain and HTTPS.
 
 **Live:** https://myfilmslog.com
 
----
-
 ## Overview
 
-Filmslog allows users to maintain a personal record of films they have watched. Each entry includes a title, genre, star rating, written review, and an optional movie poster uploaded directly to AWS S3. The diary page is fully customizable — users can set their own title and background image.
-
----
+FilmsLog allows users to maintain a personal record of films they have watched. Each entry includes a title, genre, star rating, written review, and an optional movie poster uploaded directly to AWS S3. The diary page is fully customizable: users can set their own title and background image.
 
 ## Tech Stack
 
@@ -21,15 +17,13 @@ Filmslog allows users to maintain a personal record of films they have watched. 
 | File Storage | AWS S3 |
 | Containerization | Docker, Docker Compose |
 | Container Registry | AWS ECR |
-| Compute | AWS EC2 (Amazon Linux 2023, t3.micro) |
+| Compute | AWS EC2 (Amazon Linux 2023, t3.small) |
 | Networking | AWS VPC, Subnets, Security Groups, Elastic IP |
 | IaC | Terraform |
 | CI/CD | GitHub Actions |
 | Reverse Proxy | Nginx |
 | SSL | Let's Encrypt (Certbot) |
 | DNS / CDN | Cloudflare |
-
----
 
 ## Architecture
 
@@ -56,11 +50,11 @@ DNS: Cloudflare -> Elastic IP -> EC2
 SSL: Let's Encrypt via Certbot
 ```
 
----
+The Flask container is bound to localhost (`127.0.0.1:8080`), so it is reachable only through Nginx. The SQLite database lives in a directory on the EC2 host that is mounted into the container, so it survives redeploys.
 
 ## AWS Infrastructure
 
-All infrastructure is provisioned as code using Terraform. No resources are created manually through the AWS console.
+AWS resources are provisioned with Terraform. Server software (Nginx, Certbot), DNS, and the server's environment file are configured manually.
 
 | Resource | Purpose |
 |---|---|
@@ -69,13 +63,11 @@ All infrastructure is provisioned as code using Terraform. No resources are crea
 | Internet Gateway | Enables internet access |
 | Route Table | Directs traffic through the gateway |
 | Security Groups | Firewall rules (ports 22, 80, 443, 8080) |
-| EC2 (t3.micro) | Runs the Dockerized Flask application |
+| EC2 (t3.small) | Runs the Dockerized Flask application |
 | Elastic IP | Fixed public IP address |
 | ECR | Private Docker image registry |
 | S3 + Versioning | Stores user-uploaded movie posters and backgrounds |
-| IAM Role | Grants EC2 permission to pull from ECR and access S3 |
-
----
+| IAM Role | Grants EC2 permission to pull from ECR |
 
 ## CI/CD Pipeline
 
@@ -84,18 +76,17 @@ Every push to `main` triggers the following pipeline via GitHub Actions:
 1. Checkout repository
 2. Configure AWS credentials
 3. Authenticate Docker with Amazon ECR
-4. Build Docker image for `linux/amd64`
-5. Push image to ECR with `latest` tag
+4. Build Docker image for linux/amd64
+5. Push image to ECR with the `latest` tag
 6. SSH into EC2 instance
 7. Pull latest image from ECR
 8. Stop and remove existing container
-9. Start new container
-
----
+9. Start new container with the server's env file and the data directory mounted
 
 ## Running Locally
 
 ### Prerequisites
+
 - Docker and Docker Compose
 - AWS account with S3 bucket
 - AWS credentials with S3 access
@@ -107,9 +98,9 @@ git clone https://github.com/S0R4Y4Y/filmslog.git
 cd filmslog
 ```
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root (never commit this file):
 
-```env
+```
 AWS_ACCESS_KEY_ID=your_access_key
 AWS_SECRET_ACCESS_KEY=your_secret_key
 S3_BUCKET=your_bucket_name
@@ -122,9 +113,7 @@ Start the application:
 docker-compose up --build
 ```
 
-Access at `http://localhost:8080`
-
----
+Access at http://localhost:8080
 
 ## Infrastructure Deployment
 
@@ -140,8 +129,6 @@ To tear down all resources:
 ```bash
 terraform destroy
 ```
-
----
 
 ## Project Structure
 
@@ -171,10 +158,9 @@ filmslog/
 ├── main.py                     # Application entry point
 ├── requirements.txt            # Python dependencies
 ├── Dockerfile                  # Container definition
+├── .dockerignore               # Keeps secrets and local data out of the image
 └── docker-compose.yml          # Local development setup
 ```
-
----
 
 ## Features
 
@@ -186,8 +172,6 @@ filmslog/
 - Edit and delete existing reviews
 - Responsive layout
 
----
-
 ## Notes
 
-This project is intended as a portfolio piece demonstrating cloud engineering skills. The application itself serves as a vehicle for practising real infrastructure concepts: containerization, infrastructure as code, automated deployment pipelines, and production AWS setup with a custom domain and SSL certificate.
+This project is intended as a portfolio piece demonstrating cloud engineering skills. The application itself serves as a vehicle for practising real infrastructure concepts: containerization, infrastructure as code, automated deployment pipelines, and an AWS setup with a custom domain and SSL certificate.
